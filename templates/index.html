@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Chart.js example</title>
+  </head>
+  <body>
+    <!-- <div style="width: 500px;"><canvas id="dimensions"></canvas></div><br/> -->
+    <!--<div style="width: 400px;"><canvas id="canvas"></canvas></div>-->
+  <div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <canvas id="canvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"
+        integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+    $(document).ready(function () {
+        impoc_hardness = [14.8,14.8,14.9,14.9,15,15]
+        impoc =[7498,7498,7499,7499,7500]
+
+        const cfg_impoc= {
+          type: 'line',
+          data: {
+               datasets: [{
+                  label: "impoc_hardness",
+                  backgroundColor: 'rgb(255, 99, 132)',
+                  borderColor: 'rgb(255, 99, 132)',
+                  data: impoc_hardness,
+                  fill: false,
+               }],
+               labels: impoc
+          },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'IMPOC'
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Hardness'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Impoc'
+                        }
+                    }]
+                }
+            }
+        }
+
+        const context = document.getElementById('canvas').getContext('2d');
+        //cfg_impoc.data.labels
+        //const lineChart = new Chart(context, config);
+        lineChart = new Chart(context, cfg_impoc);
+        const source = new EventSource("/chart-data-1");
+            cfg_impoc.data.labels=impoc;
+            cfg_impoc.data.datasets[0].data.push(impoc_hardness);
+            lineChart.update();
+        source.onmessage = function (event) {
+            //cfg_impoc.data.labels.push(impoc);
+            //cfg_impoc.data.datasets.data.push(impoc_hardness);
+            lineChart.update();
+        }
+    });
+</script>
+  </body>
+</html>

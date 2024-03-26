@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Chart.js example</title>
+    <title>IMPOC</title>
   </head>
   <body>
     <!-- <div style="width: 500px;"><canvas id="dimensions"></canvas></div><br/> -->
@@ -27,26 +27,23 @@
 
     <script>
     $(document).ready(function () {
-        impoc_hardness = [14.8,14.8,14.9,14.9,15,15]
-        impoc =[7498,7498,7499,7499,7500]
-
-        const cfg_impoc= {
-          type: 'line',
-          data: {
-               datasets: [{
-                  label: "impoc_hardness",
-                  backgroundColor: 'rgb(255, 99, 132)',
-                  borderColor: 'rgb(255, 99, 132)',
-                  data: impoc_hardness,
-                  fill: false,
-               }],
-               labels: impoc
-          },
+        const config = {
+            type: 'line',
+            data: {
+                labels: Array(30).fill("0000-00-00 00:00:00"),
+                datasets: [{
+                    label: "IMPOC HARDNESS",
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: Array(30).fill(null),
+                    fill: false,
+                }],
+            },
             options: {
                 responsive: true,
                 title: {
                     display: true,
-                    text: 'IMPOC'
+                    text: 'IMPOC HARDNESS'
                 },
                 tooltips: {
                     mode: 'index',
@@ -61,31 +58,34 @@
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Hardness'
+                            labelString: 'Time'
                         }
                     }],
                     yAxes: [{
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Impoc'
+                            labelString: 'Value'
                         }
                     }]
                 }
             }
-        }
+        };
 
         const context = document.getElementById('canvas').getContext('2d');
-        //cfg_impoc.data.labels
-        //const lineChart = new Chart(context, config);
-        lineChart = new Chart(context, cfg_impoc);
-        const source = new EventSource("/chart-data-1");
-            cfg_impoc.data.labels=impoc;
-            cfg_impoc.data.datasets[0].data.push(impoc_hardness);
-            lineChart.update();
+
+        const lineChart = new Chart(context, config);
+
+        const source = new EventSource("/chart-data");
+
         source.onmessage = function (event) {
-            //cfg_impoc.data.labels.push(impoc);
-            //cfg_impoc.data.datasets.data.push(impoc_hardness);
+            const data = JSON.parse(event.data);
+            if (config.data.labels.length === 30) {
+                config.data.labels.shift();
+                config.data.datasets[0].data.shift();
+            }
+            config.data.labels.push(data.time);
+            config.data.datasets[0].data.push(data.value);
             lineChart.update();
         }
     });

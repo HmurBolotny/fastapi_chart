@@ -1,0 +1,23 @@
+version: "1.0"
+
+services:
+  db:
+    container_name: Chart_app
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: chart
+      POSTGRES_PASSWORD: chart
+      POSTGRES_DB: chart
+    volumes:
+      - ./postgres_data:/var/lib/data/
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    container_name: pgadmin_chart
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: chart@mail.ru
+      PGADMIN_DEFAULT_PASSWORD: chart
+    ports:
+      - "5050:80"

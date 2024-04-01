@@ -10,8 +10,11 @@ from fastapi.templating import Jinja2Templates
 from starlette.responses import Response
 import asyncio
 import json
+from IMPOC.queries import create_tables, get
 
 
+# asyncio.run(get())
+create_tables()
 
 
 app = FastAPI()
@@ -24,19 +27,6 @@ y = 123
 
 impoc_hardness = [14.8, 14.8, 14.9, 14.9, 15, 15, 15.1, 15.1, 15.2, 15.2, 15.2, 15.3, 15.3, 15.4]
 impoc = [7498, 7498, 7499, 7499, 7500, 7500, 7501, 7501, 7502, 7502, 7502, 7503, 7503, 7504]
-
-
-def generation():
-    print('generation')
-    return ()
-
-def write_db():
-    print('write_db')
-    return()
-
-def read_db():
-    print('read_db')
-    return()
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -52,8 +42,6 @@ async def chart_data(request: Request) -> StreamingResponse:
     return response
 
 
-
-
 # logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 # logger = logging.getLogger(__name__)
 #
@@ -67,13 +55,25 @@ async def chart_data(request: Request) -> StreamingResponse:
 #     return templates.TemplateResponse("index.html", {"request": request})
 #
 #
+# async def generate_random_data(request: Request) -> Iterator[str]:
+#
+#     while True:
+#         json_data = json.dumps(
+#             {
+#                 "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+#                 "value": random.random() * 100,
+#             }
+#         )
+#         yield f"data:{json_data}\n\n"
+#         await asyncio.sleep(1)
+
 async def generate_random_data(request: Request) -> Iterator[str]:
 
     while True:
         json_data = json.dumps(
             {
-                "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "value": random.random() * 100,
+                "time": format(random.uniform(14, 18), '.2f'),
+                "value": random.randint(7500,7600),
             }
         )
         yield f"data:{json_data}\n\n"

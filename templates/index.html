@@ -30,7 +30,7 @@
         const config = {
             type: 'line',
             data: {
-                labels: Array(30).fill("0000-00-00 00:00:00"),
+                labels: Array(30).fill("0"),
                 datasets: [{
                     label: "IMPOC HARDNESS",
                     backgroundColor: 'rgb(255, 99, 132)',
@@ -58,14 +58,14 @@
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Time'
+                            labelString: 'Impoc'
                         }
                     }],
                     yAxes: [{
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Value'
+                            labelString: 'Hardness'
                         }
                     }]
                 }

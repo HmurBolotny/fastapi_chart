@@ -11,14 +11,22 @@ async def get():
         conn.commit()
 
 
-def insert_val():
+# def insert_val(impoc, hardness):
+#     with sync_engine.connect() as conn:
+#         stmt = insert(impoc_val).values(
+#             [
+#                 {"impoc": impoc, "hardness": hardness},
+#             ]
+#         )
+#         conn.execute(stmt)
+#         conn.commit()
+
+
+def insert_val(insert_dict):
     with sync_engine.connect() as conn:
-        # stmt = """INSERT INTO workers (username) VALUES
-        #     ('Jack'),
-        #     ('Michael');"""
         stmt = insert(impoc_val).values(
             [
-                {"hardness": 12, "impoc": 114},
+                insert_dict,
             ]
         )
         conn.execute(stmt)
@@ -29,9 +37,21 @@ def select_val():
     with sync_engine.connect() as conn:
         query = select(impoc_val) # SELECT * FROM workers
         result = conn.execute(query)
-        workers = result.all()
-        print(f"{workers=}")
+        impoc = result.all() #
+        print(f"{impoc=}")
+        print(f"{result.first()=}")
 
+
+def select_last_val():
+    res = None
+    with sync_engine.connect() as conn:
+        res = conn.execute(text("SELECT * FROM impoc_val WHERE id > (SELECT MAX(id) - 1 FROM impoc_val)"))
+        # print("!!!!!!")
+        # print(res.all())
+        conn.commit()
+        # print(type(res))
+        # print(type(res.all()))
+    return res.all()
 
 
 def create_tables():
@@ -59,4 +79,7 @@ async def async_delete_tables():
         await conn.run_sync(metadata.drop_all)
         await conn.commit()
 
+
+def ret():
+    return 4
 

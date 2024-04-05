@@ -84,8 +84,8 @@
                 config.data.labels.shift();
                 config.data.datasets[0].data.shift();
             }
-            config.data.labels.push(data.time);
-            config.data.datasets[0].data.push(data.value);
+            config.data.labels.push(data.impoc);
+            config.data.datasets[0].data.push(data.hardness);
             lineChart.update();
         }
     });

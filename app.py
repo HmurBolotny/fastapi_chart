@@ -10,7 +10,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.responses import Response
 import asyncio
 import json
-from IMPOC.queries import create_tables, get
+from IMPOC.queries import create_tables, delete_tables, get, insert_val, select_val, select_last_val
 
 
 # asyncio.run(get())
@@ -36,10 +36,42 @@ async def index(request: Request) -> Response:
 
 @app.get("/chart-data")
 async def chart_data(request: Request) -> StreamingResponse:
-    response = StreamingResponse(generate_random_data(request), media_type="text/event-stream")
+    delete_tables()
+    create_tables()
+    response = StreamingResponse(select_last_data(request), media_type="text/event-stream")
     response.headers["Cache-Control"] = "no-cache"
     response.headers["X-Accel-Buffering"] = "no"
     return response
+
+
+async def database_worker_main(request) -> Iterator[str]:
+    while True:
+        generate_random_data()
+        select_last_val(request)
+        await asyncio.sleep(1)
+
+
+# async def select_last_data(request: Request) -> Iterator[str]:
+#     data = select_last_val()
+#     title = ['id', 'impoc', 'hardness']
+#
+#     data2 = [
+#         dict(zip(title, list(row))) for row in data
+#     ]
+#     json_data = json.dumps(data2[0])
+#     yield f"data:{json_data}\n\n"
+
+async def select_last_data(request: Request) -> Iterator[str]:
+    while True:
+        insert_val(generate_random_data())
+        data = select_last_val()
+        title = ['id', 'impoc', 'hardness']
+        data2 = [
+            dict(zip(title, list(row))) for row in data
+        ]
+        json_data = json.dumps(data2[0])
+        yield f"data:{json_data}\n\n"
+        await asyncio.sleep(1)
 
 
 # logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -67,17 +99,15 @@ async def chart_data(request: Request) -> StreamingResponse:
 #         yield f"data:{json_data}\n\n"
 #         await asyncio.sleep(1)
 
-async def generate_random_data(request: Request) -> Iterator[str]:
+# async def generate_random_data(request: Request) -> Iterator[str]:
+def generate_random_data():
+    data = {
+        "impoc": round(random.uniform(14, 18), 2),
+        "hardness": random.randint(7500, 7600),
+    }
+    return data
 
-    while True:
-        json_data = json.dumps(
-            {
-                "time": format(random.uniform(14, 18), '.2f'),
-                "value": random.randint(7500,7600),
-            }
-        )
-        yield f"data:{json_data}\n\n"
-        await asyncio.sleep(1)
+
 #
 #
 # @application.get("/chart-data")

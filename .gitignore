@@ -1,2 +1,4 @@
 /doc
 .idea/
+.venv/
+.env

@@ -1,17 +1,22 @@
 import random
-from datetime import datetime
-from typing import Iterator
+from typing import Iterator, Annotated
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.requests import Request
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.security import OAuth2PasswordBearer
 from starlette.responses import Response
 import asyncio
 import json
-from IMPOC.queries import create_tables, delete_tables, get, insert_val, select_val, select_last_val
+from IMPOC.queries import (
+    create_tables,
+    delete_tables,
+    insert_val,
+    select_last_val,
 
+)
 
 # asyncio.run(get())
 create_tables()
@@ -19,6 +24,13 @@ create_tables()
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+@app.get("/items/")
+async def read_items(token: Annotated[str, Depends(oauth2_scheme)]):
+    return {"token": token}
 
 
 x = [(7498,14.8), (7498,14.8), (7499,14.9), (7499,14.9), (7500,15), (7500,15), (7501,15.1), (7501,15.1),

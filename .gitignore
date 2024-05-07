@@ -1,2 +1,7 @@
 /doc
 .idea/
+.venv/
+.env
+.run/
+*__pycache__/
+

@@ -1,0 +1,62 @@
+up:
+	docker-compose up -d --build
+
+stage_up:
+	docker-compose --env-file ./.stage.env up -d --build
+
+down:
+	docker-compose down
+
+stage_down:
+	docker-compose --env-file ./.stage.env down
+
+restart: down up
+
+migrate:
+	docker exec -it dev_subsidy_app_1 python manage.py migrate
+
+make_migrate:
+	docker exec -it dev_subsidy_app_1 python manage.py makemigrations
+	docker exec -it dev_subsidy_app_1 python manage.py makemigrations proposal subsidy_calc
+
+make_migrations: make_migrate migrate
+
+db_dive:
+	docker exec -it dev_db_1 bash
+
+app_dive:
+	docker exec -it dev_subsidy_app_1 bash
+
+# C = container name like dev_subsidy_app_1
+dive:
+	docker exec -it ${C} bash
+
+celery_dive_logs:
+	docker-compose logs -f 'celery'
+
+rm_none_images:
+	docker rmi $(docker images -a|grep "<none>"|awk '$1=="<none>" {print $3}')
+
+rm_db_volume:
+	docker volume rm dev_db
+
+#FLAG='--print-sql'
+shell_plus:
+	docker exec -it dev_subsidy_app_1 python3 manage.py shell_plus ${FLAG}
+
+create_superuser:
+	docker exec -it dev_subsidy_app_1 python3 manage.py createsuperuser
+
+initialize:
+	docker exec -it dev_subsidy_app_1 python3 manage.py initialize
+
+tests:
+	docker exec -it dev_subsidy_app_1 python3 manage.py test
+
+# make poetry_add NAMES=package_name
+# make poetry_add NAMES='package_name_1 package_name_2'
+poetry_add:
+	$(foreach var, $(NAMES), poetry add $(var);)
+	poetry lock
+
+drop_db: down rm_db_volume up make_migrations create_superuser initialize

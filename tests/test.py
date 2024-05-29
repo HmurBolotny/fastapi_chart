@@ -1,6 +1,6 @@
 import asyncio
 
-from IMPOC.queries import delete_tables, get, create_tables, insert_val, select_val, select_last_val, ret
+from IMPOK.queries import delete_tables, get, create_tables, insert_val, select_val, select_last_val, ret
 
 # delete_tables()
 # get()

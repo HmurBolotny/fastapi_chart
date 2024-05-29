@@ -1,9 +1,7 @@
-doker_up:
+up:
 	docker compose up -d --build
-doker_down:
+down:
 	docker compose down
-doker_restart:
-	doker_down
-	doker_up
-app_run:
+restart: docker_down docker_up
+run:
 	 uvicorn app:app --reload

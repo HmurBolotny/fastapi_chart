@@ -13,8 +13,8 @@
 """
 from sqlalchemy import text, insert, select
 
-from IMPOC.models import metadata, impoc_val
-from db.database import async_engine, sync_engine
+from IMPOK.models import metadata, impoc_val
+from db_old.database import async_engine, sync_engine
 
 
 class SyncRepo:
@@ -60,6 +60,9 @@ async def get():
         res = await conn.execute(text("SELECT VERSION()"))
         print(f"{res.all()=}")
         conn.commit()
+
+
+    
 
 
 def insert_val(insert_dict):
